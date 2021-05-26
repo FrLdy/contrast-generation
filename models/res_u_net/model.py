@@ -11,7 +11,7 @@ class ResUnetAutoencoder(nn.Module):
         self.bridge_out_channels = bridge_out_channels
 
         self.encoder = ResnetEncoder(resnet)
-
+        self.maxpool = nn.MaxPool2d(2)
         self.bridge = Bridge(
             self.encoder.last_layer_out_channels,
             bridge_out_channels
@@ -23,11 +23,11 @@ class ResUnetAutoencoder(nn.Module):
         )
 
     def forward(self, x):
+        initial_input = x
         features_maps, x = self.encoder(x)
-        print(len(features_maps), features_maps.keys())
-        x = nn.MaxPool2d(2)(x)
+        x = self.maxpool(x)
         x = self.bridge(x)
-        x = self.decoder(x, list(features_maps.values())[::-1])
+        x = self.decoder(x, list(features_maps.values())[::-1]+[initial_input])
         return x         
 
     @property
@@ -36,23 +36,4 @@ class ResUnetAutoencoder(nn.Module):
             [(self.bridge_out_channels, self.encoder.conv_block_channel_shapes[-1][1])] 
             + [t[::-1] for t in self.encoder.conv_block_channel_shapes[::-1]]
         )
-    
-
-if __name__ == '__main__':
-    from torchvision import models
-    from std_blocks import UpBlock
-
-    resnet = models.resnet18(pretrained=True)
-
-    bridge_out_channels = 1024
-    
-    autoencoder = ResUnetAutoencoder(
-        resnet,
-        bridge_out_channels,
-        UpBlock.UPSAMPLING_CONV_TRANSPOSE
-    )
-
-    x = torch.rand(1, 3, 572, 572)
-    autoencoder(x)
-    print("super")
 
