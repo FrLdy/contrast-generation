@@ -43,6 +43,10 @@ class ResnetEncoder(nn.Module):
             features_maps[name] = x
         return features_maps, x
 
+    def freeze(self):
+        for param in self.parameters():
+            param.requires_grad = False
+
     @property
     def last_layer_out_channels(self):
         return list(self.conv_blocks.values())[-1][-1].conv2.out_channels 
