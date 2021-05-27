@@ -64,10 +64,10 @@ class UpBlock(nn.Module):
     def forward(self, x, features_maps=None):
         x = self.upsample(x)
         if features_maps is not None :
-            x = torch.cat(self.crop(x, features_maps), 1)
+            x = torch.cat(self.crop(features_maps, x), 1)
         x = self.conv_blocks(x)
         return x
 
     def crop(self, x, y):
         final_shape = [min(x.shape[i], y.shape[i]) for i in range(2,4)]
-        return [t[:, :, :final_shape[-2], :final_shape[-2]] for t in (x, y)]
+        return [t[:, :, :final_shape[-2], :final_shape[-1]] for t in (x, y)]
