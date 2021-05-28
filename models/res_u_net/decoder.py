@@ -1,3 +1,4 @@
+from torch._C import Size
 import torch.nn as nn
 
 from .std_blocks import UpBlock
@@ -6,10 +7,12 @@ class UnetDecoder(nn.Module):
     def __init__(self, 
         decoder_channels,
         upsampling_method,
-        out_channels=3
+        output_size,
+        out_channels=3 
     ):
         super().__init__()
         self.decoder_channels = decoder_channels
+        self.output_size = output_size
         self.upsampling_method = upsampling_method
         self.up_blocks = self.build_up_blocks()
         self.last_up = UpBlock(
@@ -42,4 +45,5 @@ class UnetDecoder(nn.Module):
             x = block(x, fm)
         x = self.last_up(x, encoder_features_maps[-1])
         x = self.last_layer(x)
+        x = nn.functional.interpolate(x, self.output_size)
         return x
