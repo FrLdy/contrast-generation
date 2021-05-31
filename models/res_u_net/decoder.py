@@ -15,12 +15,7 @@ class UnetDecoder(nn.Module):
         self.output_size = output_size
         self.upsampling_method = upsampling_method
         self.up_blocks = self.build_up_blocks()
-        self.last_up = UpBlock(
-                *[decoder_channels[-1][1]]*2,
-                decoder_channels[-1][1]+3,
-                decoder_channels[-1][1],
-                upsampling_method="bilinear"
-        )
+        
         self.last_layer = nn.Conv2d(
             in_channels=decoder_channels[-1][1], 
             out_channels=out_channels,
@@ -43,7 +38,6 @@ class UnetDecoder(nn.Module):
     def forward(self, x, encoder_features_maps):
         for block, fm in zip(self.up_blocks.values(), encoder_features_maps) :
             x = block(x, fm)
-        x = self.last_up(x, encoder_features_maps[-1])
         x = self.last_layer(x)
         x = nn.functional.interpolate(x, self.output_size)
         return x
