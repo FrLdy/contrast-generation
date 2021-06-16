@@ -1,6 +1,7 @@
+import torch
 import torchvision.transforms as transforms
 import torch.utils.data as data
-import numpy as np
+import matplotlib.pyplot as plt
 import json
 import skimage.io as io
 from pycocotools.coco import COCO
@@ -25,21 +26,6 @@ class CocoPairsDataset(data.Dataset):
             imgs = [extract_img(i) for i in range(1, 3)]
         return imgs + [raw["super_class"]]
 
-def coco_pairs_dataset(anns, pairs_file):
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Resize((224, 224)),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
-    ]) 
-
-    return CocoPairsDataset(
-        coco=anns if isinstance(anns, COCO) else COCO(anns),
-        pairs=json.load(open(pairs_file, "r")),
-        transform=transform
-    )
 
 class CocoDataset(data.Dataset):
     def __init__(self, coco, image_ids, transform=None):
@@ -53,25 +39,14 @@ class CocoDataset(data.Dataset):
 
     def __getitem__(self, index):
         data = self.image_ids[index]
-        id, super_class = data["id"], data["meta_class"]
-        img = io.imread(self.coco.loadImgs(id)[0]["coco_url"])
+        
+        img = io.imread(self.coco.loadImgs(data["id"])[0]["coco_url"])
+        super_class = data["meta_class"]
+
+        if img.shape[0] == 1:
+            img = torch.Tensor(img).repeat(3, 1, 1)
+
         if self.transform is not None:
             img = self.transform(img)
+
         return img, super_class
-
-
-def coco_dataset(anns, ids_file):
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Resize((224, 224)),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
-    ]) 
-
-    return CocoDataset(
-        coco=anns if isinstance(anns, COCO) else COCO(anns),
-        image_ids=json.load(open(ids_file, "r")),
-        transform=transform
-    )
