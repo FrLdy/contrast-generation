@@ -3,6 +3,31 @@ from datasets.coco_dataset import CocoDataset, CocoPairsDataset
 from pycocotools.coco import COCO
 import torch
 import torch.utils.data as torch_data
+import torchvision.transforms as transforms
+
+data_files = {
+    "coco_anns_all" : "instances_all2017",
+    
+    "all" : {
+        "singles" : "imgs",
+        "pairs" : "pairs"
+    },
+    
+    "sport" : {
+        "singles" : "imgs_sport",
+        "pairs" : "pairs_sport"
+    }  
+}
+
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Resize((128, 128)),
+    transforms.Lambda(lambda x : x.repeat(3, 1, 1) if x.shape[0] == 1 else x),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
 
 def coco_pairs_dataset(anns, pairs_file, transform):
     return CocoPairsDataset(
