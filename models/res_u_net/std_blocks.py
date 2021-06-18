@@ -63,7 +63,7 @@ class UpBlock(nn.Module):
     
     def forward(self, x, features_maps=None):
         x = self.upsample(x)
-        if features_maps is not None :
+        if features_maps is not None:
             x = torch.cat(self.crop(features_maps, x), 1)
         x = self.conv_blocks(x)
         return x
