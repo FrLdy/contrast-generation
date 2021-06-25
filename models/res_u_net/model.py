@@ -5,7 +5,7 @@ from .bridge import Bridge
 from .decoder import UnetDecoder
 
 class ResUnetAutoencoder(nn.Module):
-    def __init__(self, resnet, bridge_out_channels, upsampling_method, output_size):
+    def __init__(self, resnet, bridge_out_channels, upsampling_method, output_size, copy_n_crop):
         super().__init__()
 
         self.bridge_out_channels = bridge_out_channels
@@ -20,7 +20,8 @@ class ResUnetAutoencoder(nn.Module):
         self.decoder = UnetDecoder(
             self.decoder_channels,
             upsampling_method,
-            output_size=output_size
+            output_size=output_size,
+            copy_n_crop=copy_n_crop
         )
 
     def forward(self, x):
