@@ -1,11 +1,18 @@
 import torch
 import torch.nn as nn
-from .encoder import ResnetEncoder
-from .bridge import Bridge
-from .decoder import UnetDecoder
+import torch.nn.functional as F
+import pytorch_lightning as pl
 
-class ResUnetAutoencoder(nn.Module):
-    def __init__(self, resnet, bridge_out_channels, upsampling_method, output_size, copy_n_crop):
+
+from models.autoencoders.components import (
+    ResnetEncoder,
+    Bridge, 
+    UnetDecoder
+)
+
+
+class ResUnetAE(pl.LightningModule):
+    def __init__(self, resnet, bridge_out_channels, upsampling_method, output_size, copy_n_crop=True, lr=1e-4):
         super().__init__()
 
         self.bridge_out_channels = bridge_out_channels
@@ -24,9 +31,12 @@ class ResUnetAutoencoder(nn.Module):
             copy_n_crop=copy_n_crop
         )
 
+        self.lr = lr
+
     def forward(self, x):
         initial_input = x
-        features_maps, x = self.encoder(x)
+        with torch.no_grad():
+            features_maps, x = self.encoder(x)
         x = self.maxpool(x)
         x = self.bridge(x)
         x = self.decoder(x, list(features_maps.values())[::-1]+[initial_input])
@@ -39,3 +49,10 @@ class ResUnetAutoencoder(nn.Module):
             + [t[::-1] for t in self.encoder.conv_block_channel_shapes[::-1]]
         )
 
+    def training_step(self, batch, batch_idx):
+        x = batch
+        x_hat = self(x)
+        loss = F.binary_cross_entropy(x_hat, x)
+
+    def configure_optimizers(self):
+        return torch.optim.Adam(self.parameters(), lr=self.lr)
