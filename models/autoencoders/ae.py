@@ -34,12 +34,9 @@ class ResUnetAE(pl.LightningModule):
         self.lr = lr
 
     def forward(self, x):
-        initial_input = x
-        with torch.no_grad():
-            features_maps, x = self.encoder(x)
+        features_maps, x = self.encoder(x)
         x = self.maxpool(x)
         x = self.bridge(x)
-        x = self.decoder(x, list(features_maps.values())[::-1]+[initial_input])
         return x         
 
     @property
@@ -50,9 +47,26 @@ class ResUnetAE(pl.LightningModule):
         )
 
     def training_step(self, batch, batch_idx):
+        x, labels = batch
+        loss = self.shared_step(x) 
+        self.log('train_loss', loss, prog_bar=True)
+        return loss
+
+    def test_step(self, batch, batch_idx):
         x = batch
-        x_hat = self(x)
-        loss = F.binary_cross_entropy(x_hat, x)
+        loss = self.shared_step(x)
+        self.log('val_loss', loss, prog_bar=True )
+        return loss
+
+    def shared_step(self, batch):
+        x = batch
+        with torch.no_grad():
+            features_maps, x = self.encoder(x)
+        x = self.maxpool(x)
+        x = self.bridge(x)
+        x = self.decoder(x, list(features_maps.values())[::-1])
+        return F.mse_loss(x, batch)
+        
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.lr)
