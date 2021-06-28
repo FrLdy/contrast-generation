@@ -14,13 +14,16 @@ def split_dataset(dataset, prop_train):
         generator=torch.Generator().manual_seed(42)
     )))
 
-def coco_pairs_dataloaders(dataset, prop_train, batch_size, shuffle, num_workers):
-    return {k:torch_data.DataLoader(v, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers) 
+def pairs_dataloaders(dataset, prop_train, batch_size, shuffle, num_workers):
+    return {k:torch_data.DataLoader(v, batch_size=batch_size, shuffle=(shuffle and k != "test"), num_workers=num_workers) 
             for k,v in split_dataset(dataset, prop_train).items()
     }
 
-def coco_dataloader(dataset, batch_size, shuffle, num_workers):
-    return torch_data.DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers) 
+def singles_dataloader(dataset, prop_train, batch_size, shuffle, num_workers):
+    return {
+        k:torch_data.DataLoader(v, batch_size=batch_size, shuffle=(shuffle and k != "test"), num_workers=num_workers) 
+        for k,v in split_dataset(dataset, prop_train).items()
+    }
 
 
 
