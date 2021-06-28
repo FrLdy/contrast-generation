@@ -59,13 +59,21 @@ class ResUnetAE(pl.LightningModule):
         return loss
 
     def shared_step(self, batch):
+        z, features_maps = self._compute_embedding_step(batch)
+        x_hat = self._decoding_embedding_step(z, features_maps)
+        return F.mse_loss(x_hat, batch)
+
+    def _compute_embedding_step(self, batch):
         x = batch
         with torch.no_grad():
             features_maps, x = self.encoder(x)
         x = self.maxpool(x)
-        x = self.bridge(x)
-        x = self.decoder(x, list(features_maps.values())[::-1])
-        return F.mse_loss(x, batch)
+        z = self.bridge(x)
+        return z, features_maps
+
+    def _decoding_embedding_step(self, z, features_maps):
+        x_hat = self.decoder(z, list(features_maps.values())[::-1])
+        return x_hat
         
 
     def configure_optimizers(self):
