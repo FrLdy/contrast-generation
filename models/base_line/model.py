@@ -120,8 +120,4 @@ class BaseLine(pl.LightningModule):
 
         return opes[mode]["fn"](*opes[mode]["parameters"])
 
-    def train_dataloader(self) -> Union[DataLoader, List[DataLoader], Dict[str, DataLoader]]:
-        ae = None
-        gan = None
-        return [ae, gan]
 
