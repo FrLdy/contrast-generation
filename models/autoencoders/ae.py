@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
-
+import itertools
 
 from models.autoencoders.components import (
     ResnetEncoder,
@@ -65,11 +65,14 @@ class ResUnetAE(pl.LightningModule):
 
     def _compute_embedding_step(self, batch):
         x = batch
-        with torch.no_grad():
-            features_maps, x = self.encoder(x)
+        features_maps, x = self.encoder(x)
+        z = self._bridge_forward(x) 
+        return z, features_maps
+
+    def _bridge_forward(self, x):
         x = self.maxpool(x)
         z = self.bridge(x)
-        return z, features_maps
+        return z
 
     def _decoding_embedding_step(self, z, features_maps):
         x_hat = self.decoder(z, list(features_maps.values())[::-1])
@@ -77,4 +80,7 @@ class ResUnetAE(pl.LightningModule):
         
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.lr)
+        params = [
+            self.bridge.parameters(), self.decoder.parameters()
+        ]
+        return torch.optim.Adam(itertools.chain(*params), lr=self.lr)
