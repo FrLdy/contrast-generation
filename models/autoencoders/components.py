@@ -82,6 +82,14 @@ class Bridge(nn.Module):
     def forward(self, x):
         return self.bridge(x)
 
+    @property
+    def in_channels(self):
+        return self.bridge[0].conv.in_channels
+    
+    @property
+    def out_channels(self):
+        return self.bridge[-1].conv.out_channels
+
 class UnetDecoder(nn.Module):
     def __init__(self, 
         decoder_channels,
