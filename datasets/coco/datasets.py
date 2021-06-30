@@ -25,7 +25,7 @@ class CocoPairsDataset(data.Dataset):
             imgs = [self.transform(extract_img(i)) for i in range(1, 3)]
         else : 
             imgs = [extract_img(i) for i in range(1, 3)]
-        return np.array(imgs), raw["super_class"]
+        return imgs, raw["super_class"]
 
 
 class CocoDataset(data.Dataset):
