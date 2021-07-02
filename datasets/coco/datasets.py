@@ -1,3 +1,4 @@
+from numpy.lib.histograms import _ravel_and_check_weights
 import torch
 import torchvision.transforms as transforms
 import torch.utils.data as data
@@ -25,7 +26,7 @@ class CocoPairsDataset(data.Dataset):
             imgs = [self.transform(extract_img(i)) for i in range(1, 3)]
         else : 
             imgs = [extract_img(i) for i in range(1, 3)]
-        return imgs, raw["super_class"]
+        return *imgs, raw["super_class"]
 
 
 class CocoDataset(data.Dataset):
@@ -52,29 +53,10 @@ class CocoDataset(data.Dataset):
 
         return img, super_class
 
-
-
-
-
-def coco_pairs_dataset(anns, pairs_file, transform, ):
-    return CocoPairsDataset(
-        coco=anns if isinstance(anns, COCO) else COCO(anns),
-        pairs=json.load(open(pairs_file, "r"))[slice],
-        transform=transform
-    )
-
-def coco_singles_dataset(anns, ids_file, transform, slice=slice(None, None)):
-    return CocoDataset(
-        coco=anns if isinstance(anns, COCO) else COCO(anns),
-        image_ids=json.load(open(ids_file, "r"))[slice],
-        transform=transform
-    )
-
-
-class CocoDataLoader():
+class CocoDatasets():
     coco = None
-    def __init__(self) -> None:
-        self.data_dir_pattern = "/Volumes/F_LEDOYEN/ms_coco/annotations/{}.json"
+    def __init__(self, data_dir="/Volumes/F_LEDOYEN/ms_coco/annotations") -> None:
+        self.data_dir_pattern = data_dir+"/{}.json"
         self.data_files = {
             "coco_anns_all" : "instances_all2017",
             
@@ -90,7 +72,7 @@ class CocoDataLoader():
         }
         self.data_files = f.map_nested_dicts(self.data_files, lambda k, v : self.data_dir_pattern.format(v))
 
-        self.transform = transforms.Compose([
+        self.pairs_transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize((128, 128)),
             transforms.Lambda(lambda x : x.repeat(3, 1, 1) if x.shape[0] == 1 else x),
@@ -100,21 +82,31 @@ class CocoDataLoader():
             )
         ])
 
+        self.singles_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((64, 64)),
+            transforms.Lambda(lambda x : x.repeat(3, 1, 1) if x.shape[0] == 1 else x),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            )
+        ])
 
-        if CocoDataLoader.coco is None :
-            CocoDataLoader.coco = COCO(self.data_files["coco_anns_all"]) 
-        self.coco = CocoDataLoader.coco 
 
-    def pairs_dataset(self, slice=slice(None, None)):
-        return coco_pairs_dataset(
-            self.coco, 
-            self.data_files["sport"]["pairs"], 
-            self.transform, slice
-        ) 
+        if CocoDatasets.coco is None :
+            CocoDatasets.coco = COCO(self.data_files["coco_anns_all"]) 
+        self.coco = CocoDatasets.coco 
 
-    def singles_dataset(self, slice=slice(None, None)):
-        return coco_singles_dataset(
-            self.coco, 
-            self.data_files["sport"]["singles"], 
-            self.transform, slice
+    def pairs(self, slice):
+        return CocoPairsDataset(
+            coco=self.coco,
+            pairs=json.load(open(self.data_files["sport"]["pairs"], "r"))[slice],
+            transform=self.pairs_transform
+        )
+
+    def singles(self, slice=slice(None, None)):
+        return CocoDataset(
+            coco=self.coco,
+            image_ids=json.load(open(self.data_files["sport"]["singles"], "r"))[slice],
+            transform=self.pairs_transform
         )
