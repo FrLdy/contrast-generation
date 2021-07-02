@@ -1,7 +1,9 @@
+from logging import currentframe
 import torch
 import torch.nn as nn
 import torchvision
 import torch.nn.functional as F
+import torch.utils.data as torch_data
 
 import pytorch_lightning as pl
 
@@ -19,7 +21,7 @@ class BaseLine(pl.LightningModule):
     
     resnet = torchvision.models.resnet18(pretrained=True)
 
-    def __init__(self, bridge_out_channels, gan_noise_dim, gan_lr):
+    def __init__(self, bridge_out_channels, gan_noise_dim, ae_train_dl, gen_train_dl, disc_train_dl):
         super().__init__()
         self.ae = ResUnetAE(self.resnet, bridge_out_channels, "conv_transpose", (128, 128))
 
@@ -31,8 +33,15 @@ class BaseLine(pl.LightningModule):
         )
         
         self.gan = ConstrastDCGAN(
-            latent_dim=bridge_out_channels+gan_noise_dim
+            latent_dim=bridge_out_channels+gan_noise_dim,
+            noise_dim=gan_noise_dim
         )
+
+        self.ae_train_dl = ae_train_dl
+        self.gen_train_dl = gen_train_dl
+        self.disc_train_dl = disc_train_dl
+
+        self.lr = 0.0004
     
     def _ae_forward(self, batch):
         x1, x2, labels = batch
@@ -54,6 +63,7 @@ class BaseLine(pl.LightningModule):
             z = torch.cat((zi, zj), 1)
             z = self.conv_input_decoder(z)
             x_hat = self.decoder(z, list(fm.values())[::-1])
+            
             return x_hat
         
         ae_res = self._ae_forward(batch)
@@ -65,21 +75,55 @@ class BaseLine(pl.LightningModule):
         self.gan.contrast_batch = ae_res["differences"] # set input for generator
         
         x1, x2, labels = batch
-        losses = F.mse_loss(x1_hat, x1) + F.mse_loss(x2_hat, x2)
-        return losses
+        loss = F.mse_loss(x1_hat, x1) + F.mse_loss(x2_hat, x2)
+        
+        return {"loss" : loss, "z_union": ae_res["union"]}
 
     def _gan_training_step(self, batch, optimizer_idx):
         return self.gan.training_step(batch, optimizer_idx-1)
 
-
-    def training_step(self, batch, optimizer_idx):
-        batch_ae, batch_gan = batch
+    def training_step(self, batch, batch_idx, optimizer_idx):
+        res = None
         if optimizer_idx == 0:
-            res = self._ae_training_step(batch_ae)
-        else :
-            res = self._gan_training_step(batch_gan, optimizer_idx)
+            print("Train AE")
+            res = self._ae_training_step(batch["ae"])
+        elif optimizer_idx == 1 :
+            print("Train DISC")
+            res = self.gan._disc_step(batch["gan_real"], batch["gan_fake"])
+        elif optimizer_idx == 2 :
+            print("Train GEN")
+            res = self.gan._gen_step(batch["gan_fake"])
+        
         return res
 
+    def training_epoch_end(self, outputs):
+        if self.current_epoch % 2 == 0:
+            self.gen_train_dl = torch_data.DataLoader([o["z_union"] for o in outputs], batch_size=self.ae_train_dl.batch_size)
+
+    def train_dataloader(self):
+        return {
+            "ae"    : self.ae_train_dl, 
+            "gan_real"  : self.disc_train_dl, 
+            "gan_fake"   : self.gen_train_dl
+        }
+
+    def optimizer_step(self, epoch, batch_idx, optimizer, optimizer_idx, optimizer_closure, on_tpu, using_native_amp, using_lbfgs):
+
+        # update AE during entire epoch (1 ep on 2)
+        if epoch % 2 == 0 :
+            if optimizer_idx == 0 :
+                optimizer.step(closure=optimizer_closure)
+        # update GAN during entire epoch (1 ep on 2)
+        else :
+            # update discriminator 1 batch on 2
+            if batch_idx % 2 == 0:
+                if optimizer_idx == 1:
+                    optimizer.step(closure=optimizer_closure)
+            # update generator
+            else : 
+                if optimizer_idx == 2:
+                    optimizer.step(closure=optimizer_closure)
+    
     def _configure_ae_optimizers(self):
         params = [
             self.bridge.parameters(), 
@@ -93,9 +137,7 @@ class BaseLine(pl.LightningModule):
         return self.gan.configure_optimizers()[0]
 
     def configure_optimizers(self):
-        return self._configure_ae_optimizers(), *self.gan.configure_optimizers()
-
-
+        return [self._configure_ae_optimizers()]+self._configure_gan_optimizers(), []
 
     @property
     def decoder(self):
