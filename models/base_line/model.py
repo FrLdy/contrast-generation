@@ -72,8 +72,6 @@ class BaseLine(pl.LightningModule):
             for z, fm in (zip(ae_res["differences"], ae_res["features"]))
         ]
 
-        self.gan.contrast_batch = ae_res["differences"] # set input for generator
-        
         x1, x2, labels = batch
         loss = F.mse_loss(x1_hat, x1) + F.mse_loss(x2_hat, x2)
         
@@ -85,27 +83,33 @@ class BaseLine(pl.LightningModule):
     def training_step(self, batch, batch_idx, optimizer_idx):
         res = None
         if optimizer_idx == 0:
-            print("Train AE")
             res = self._ae_training_step(batch["ae"])
         elif optimizer_idx == 1 :
-            print("Train DISC")
             res = self.gan._disc_step(batch["gan_real"], batch["gan_fake"])
         elif optimizer_idx == 2 :
-            print("Train GEN")
             res = self.gan._gen_step(batch["gan_fake"])
         
         return res
 
     def training_epoch_end(self, outputs):
-        if self.current_epoch % 2 == 0:
-            self.gen_train_dl = torch_data.DataLoader([o["z_union"] for o in outputs], batch_size=self.ae_train_dl.batch_size)
+        if self.is_ae_epoch:
+            self.gen_train_dl = torch_data.DataLoader([t for b in outputs for t in b["z_union"]], batch_size=self.ae_train_dl.batch_size)
+
+    @property
+    def is_ae_epoch(self):
+        return self.current_epoch % 2 == 0
 
     def train_dataloader(self):
-        return {
-            "ae"    : self.ae_train_dl, 
-            "gan_real"  : self.disc_train_dl, 
-            "gan_fake"   : self.gen_train_dl
-        }
+        res = None
+        if self.is_ae_epoch:
+            res = {"ae" : self.ae_train_dl}
+        else : 
+            res =  {
+                "gan_real"  : self.disc_train_dl, 
+                "gan_fake"   : self.gen_train_dl
+            }
+        
+        return res
 
     def optimizer_step(self, epoch, batch_idx, optimizer, optimizer_idx, optimizer_closure, on_tpu, using_native_amp, using_lbfgs):
 
