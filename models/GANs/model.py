@@ -32,8 +32,9 @@ class ConstrastDCGAN(DCGAN):
 
     
     def _get_fake_pred(self, batch: torch.Tensor) -> torch.Tensor:
+        print(batch.shape)
         noise = self._get_noise(len(batch), self.noise_dim)
-        noise = torch.cat((batch.flatten(2), noise), 1)
+        noise = torch.cat((batch.flatten(1), noise), 1)
 
         fake = self(noise)
         fake_pred = self.discriminator(fake)
