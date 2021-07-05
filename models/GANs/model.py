@@ -24,19 +24,21 @@ class ConstrastDCGAN(DCGAN):
         
         self.noise_dim = noise_dim
 
+    def forward(self, z):
+        z_noised = self._batch_noising(z)
+        z_noised = z_noised.view(*z_noised.shape, 1, 1)
+        res = self.generator(z_noised)
 
+        return res
 
-    def forward(self, noise):
-        noise = noise.view(*noise.shape, 1, 1)
-        return self.generator(noise)
-
-    
-    def _get_fake_pred(self, batch: torch.Tensor) -> torch.Tensor:
-        print(batch.shape)
+    def _batch_noising(self, batch):
         noise = self._get_noise(len(batch), self.noise_dim)
-        noise = torch.cat((batch.flatten(1), noise), 1)
+        res = torch.cat((batch, noise), 1)
 
-        fake = self(noise)
+        return res
+
+    def _get_fake_pred(self, batch: torch.Tensor):
+        fake = self(batch)
         fake_pred = self.discriminator(fake)
         return fake_pred
 
