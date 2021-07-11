@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Slurm submission script, 
+# GPU job 
+# CRIHAN v 1.00 - Jan 2017 
+# support@criann.fr
+
+# Shared resources by default
+
+# Job name
+#SBATCH -J "run_torch"
+
+# Batch output file
+#SBATCH --output run_torch.o%J
+
+# Batch error file
+#SBATCH --error run_torch.e%J
+
+# GPUs architecture and number
+# ----------------------------
+# Partition (submission class)
+#SBATCH --partition gpu_v100
+
+# GPUs per compute node
+#   gpu:4 (maximum) for gpu_k80 
+#   gpu:2 (maximum) for gpu_p100 
+#SBATCH --gres gpu:1
+
+
+# CPUs per task
+# Set the number of cpu in proportion to the number of GPU's devices :
+# gpu_k80 until 7 cores / device
+# gpu_p100 until 14 cores / device
+# gpu_v100 until 8 cores / device
+#SBATCH --cpus-per-task 7
+# ----------------------------
+
+# Job time (hh:mm:ss)
+#SBATCH --time 01:00:00
+
+# ------------------------
+# Job maximum memory (MB)
+#SBATCH --mem 3000 
+# ------------------------
+
+#SBATCH --mail-type ALL
+# User e-mail address
+##SBATCH --mail-user firstname.name@domain.ext
+
+# environments
+# ---------------------------------
+module purge
+module load python3-DL/torch/1.2.0-cuda10
+# ---------------------------------
+
+# Copy script input data and go to working directory
+cp train.py $LOCAL_WORK_DIR
+cd $LOCAL_WORK_DIR/
+echo Working directory : $PWD
+
+srun python3 train.py
+
+# Move output data to target directory
+mkdir $SLURM_SUBMIT_DIR/$SLURM_JOB_ID
+mv *.h5  $SLURM_SUBMIT_DIR/$SLURM_JOB_ID
