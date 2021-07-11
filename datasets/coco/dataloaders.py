@@ -8,13 +8,13 @@ class CocoDataLoaders():
 
     def pairs(self, prop_train, batch_size, shuffle, slice=slice(None, None)):
         return {k:torch_data.DataLoader(v, batch_size=batch_size, shuffle=(shuffle and k != "test"), num_workers=self.num_workers) 
-                for k,v in CocoDataLoaders.split_dataset(self.coco_datasets.pairs(slice), prop_train).items()
+                for k,v in CocoDataLoaders.split_dataset(self.coco_datasets.pairs(slice=slice), prop_train).items()
         }
 
     def singles(self, prop_train, batch_size, shuffle, slice=slice(None, None)):
         return {
             k:torch_data.DataLoader(v, batch_size=batch_size, shuffle=(shuffle and k != "test"), num_workers=self.num_workers) 
-            for k,v in self.split_dataset(self.coco_datasets.singles(slice), prop_train).items()
+            for k,v in self.split_dataset(self.coco_datasets.singles(slice=slice), prop_train).items()
         }
 
     @staticmethod    
