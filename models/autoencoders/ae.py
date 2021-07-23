@@ -12,16 +12,16 @@ from models.autoencoders.components import (
 
 
 class ResUnetAE(pl.LightningModule):
-    def __init__(self, resnet, bridge_out_channels, upsampling_method, output_size, copy_n_crop=True, lr=1e-4):
+    def __init__(self, resnet, bridge_out_dims, upsampling_method, output_size, copy_n_crop=True, lr=1e-4):
         super().__init__()
 
-        self.bridge_out_channels = bridge_out_channels
+        self.bridge_out_dims = bridge_out_dims
 
         self.encoder = ResnetEncoder(resnet)
         self.maxpool = nn.MaxPool2d(2)
         self.bridge = Bridge(
             self.encoder.last_layer_out_channels,
-            bridge_out_channels
+            bridge_out_dims
         )
         
         self.decoder = UnetDecoder(
@@ -42,7 +42,7 @@ class ResUnetAE(pl.LightningModule):
     @property
     def decoder_channels(self):
         return (
-            [(self.bridge_out_channels, self.encoder.conv_block_channel_shapes[-1][1])] 
+            [(self.bridge.out_channels, self.encoder.conv_block_channel_shapes[-1][1])] 
             + [t[::-1] for t in self.encoder.conv_block_channel_shapes[::-1]]
         )
 

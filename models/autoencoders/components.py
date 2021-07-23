@@ -72,11 +72,16 @@ class UpBlock(nn.Module):
         return [t[:, :, :final_shape[-2], :final_shape[-1]] for t in (x, y)]
 
 class Bridge(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, input_dim, output_dims):
         super().__init__()
+
+        layers = []
+        for output_dim in output_dims:
+            layers.append(ConvBlock(input_dim, output_dim))
+            input_dim = output_dim
+
         self.bridge = nn.Sequential(
-            ConvBlock(in_channels, out_channels),
-            ConvBlock(out_channels, out_channels)
+            *layers
         )
 
     def forward(self, x):

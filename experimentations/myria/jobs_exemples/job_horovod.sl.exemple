@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Slurm submission script, 
+# Horovod job 
+# CRIHAN v 1.00 - Jan 2017 
+# support@criann.fr
+
+# Not shared resources
+#SBATCH --exclusive
+
+# Job name
+#SBATCH -J "test_hvd"
+
+# Batch output file
+#SBATCH --output test_hvd.o%J
+
+# Batch error file
+#SBATCH --error test_hvd.e%J
+
+# ----------------------------
+# Partition (submission class)
+#SBATCH --partition gpu_k80
+# ----------------------------
+# GPUs architecture and number
+## /!\ Attention
+#  number of --gres gpu:X must be equal to --tasks-per-node (max 2 on p100 and 4 on k80)
+#  --cpus-per-task x tasks-per-node must be <= 28 (number of cpus per node)
+# -- total amount of horovod tasks (total amount of gpus) = --tasks-per-node x --nodes
+# the following configuration 4 horovod tasks on 2 nodes with 2 tasks per node on one gpus per task
+#SBATCH --cpus-per-task=7
+#SBATCH --tasks-per-node=4
+#SBATCH --gres gpu:4
+# ----------------------------
+
+# Job time (hh:mm:ss)
+#SBATCH --time 01:00:00
+# ----------------------------
+# MPI tasks number
+#SBATCH --ntasks 4 
+
+#SBATCH --mail-type ALL
+# User e-mail address
+##SBATCH --mail-user benoist.gaston@criann.fr
+
+# environments
+# ---------------------------------
+module load python3-DL/3.6.9
+# ---------------------------------
+
+# Copy input data and go to working directory
+cp hvd_mnist.py $LOCAL_WORK_DIR
+
+cd $LOCAL_WORK_DIR/
+echo Working directory : $PWD
+srun python3 hvd_mnist.py
+

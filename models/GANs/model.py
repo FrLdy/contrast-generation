@@ -1,4 +1,6 @@
 import torch
+import torch.optim
+
 from pl_bolts.models.gans import DCGAN
 
 class ConstrastDCGAN(DCGAN):
@@ -10,7 +12,8 @@ class ConstrastDCGAN(DCGAN):
         feature_maps_gen: int=64, 
         feature_maps_disc: int=64, 
         image_channels: int=3, 
-        learning_rate: float=0.5, 
+        learning_rate: float=0.5,
+        weight_decay: float=0,
         **kwargs) -> None:
         
         super().__init__(
@@ -23,6 +26,7 @@ class ConstrastDCGAN(DCGAN):
             **kwargs)
         
         self.noise_dim = noise_dim
+        self.weight_decay = weight_decay
 
     def forward(self, z):
         z_noised = self._batch_noising(z)
@@ -63,3 +67,10 @@ class ConstrastDCGAN(DCGAN):
         disc_loss = self._get_disc_loss(real, fake)
         self.log("loss/disc", disc_loss, on_epoch=True)
         return disc_loss
+    
+    def configure_optimizers(self):
+        lr = self.hparams.learning_rate
+        betas = (self.hparams.beta1, 0.999)
+        opt_disc = torch.optim.Adam(self.discriminator.parameters(), lr=lr, betas=betas, weight_decay=self.weight_decay)
+        opt_gen = torch.optim.Adam(self.generator.parameters(), lr=lr, betas=betas, weight_decay=self.weight_decay)
+        return [opt_disc, opt_gen], []
