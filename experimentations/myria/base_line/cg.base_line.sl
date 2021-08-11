@@ -27,7 +27,7 @@ cp hvd_mnist.py $LOCAL_WORK_DIR
 # Starting the calculation
 cd $LOCAL_WORK_DIR/
 echo Working directory : $PWD
-srun python3 hvd_mnist.py > std_out.log
+srun python3 train.py > std_out.log
 
 mkdir $SLURM_SUBMIT_DIR/logs/$SLURM_JOB_ID
 mv *.log $SLURM_SUBMIT_DIR/logs/$SLURM_JOB_ID/ 
