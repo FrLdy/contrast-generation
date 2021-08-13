@@ -1,1 +1,0 @@
-from contrast_generation.models.base_line.model import BaseLine

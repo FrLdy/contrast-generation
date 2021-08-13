@@ -1,6 +1,6 @@
 import torch
 import torch.utils.data as torch_data
-from torch.utils.data import dataloader
+import math
 
 class CocoDataLoaders():
     def __init__(self, coco_datasets, num_workers, type="sport") -> None:
@@ -12,7 +12,7 @@ class CocoDataLoaders():
         return self.build_dataloaders("pairs", prop_train, prop_val, prop_test, batch_size, shuffle, slice)
 
     def singles(self, prop_train=0, prop_val=0, prop_test=0, batch_size=32, shuffle=True, slice=slice(None, None)):
-        return self.build_dataloaders("singles", prop_train, prop_val, prop_test, batch_size, shuffle)
+        return self.build_dataloaders("singles", prop_train, prop_val, prop_test, batch_size, shuffle, slice)
 
     def build_dataloaders(self, type, prop_train, prop_val, prop_test, batch_size, shuffle, slice):
         if type == "pairs" :
@@ -36,8 +36,7 @@ class CocoDataLoaders():
         for n,p in zip(["train", "val", "test"], [prop_train, prop_val, prop_test]):
             if p > 0:
                 parts.append(n)
-                lengths.append(dataset_size*p) 
-
+                lengths.append(round(dataset_size*p))
 
         return dict(zip(
             parts, 

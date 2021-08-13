@@ -1,10 +1,14 @@
-import sys
-print(sys.path)
 from logging import log
 import optuna
 from optuna.integration import PyTorchLightningPruningCallback
 
-from contrast_generation.models.base_line import BaseLine
+import os, sys
+sys.path.insert(
+    0,
+    os.path.sep.join(os.path.abspath(__file__).split(os.path.sep)[:-4])
+)
+
+import contrast_generation.models as models
 from contrast_generation.dataloading.coco.datasets import CocoDatasets
 from contrast_generation.dataloading.coco.dataloaders import CocoDataLoaders
 
@@ -20,11 +24,11 @@ EPOCHS = 50
 NB_GPUS = -1 #all GPUs
 
 
-def dataloaders(data_dir):
-    coco_datasets = CocoDatasets(anns_dir=data_dir)
-    coco_dataloaders = CocoDataLoaders(coco_datasets)
+def dataloaders(imgs_dir, anns_dir):
+    coco_datasets = CocoDatasets(imgs_dir, anns_dir)
+    coco_dataloaders = CocoDataLoaders(coco_datasets, 4, "sport")
     props_pairs = dict(
-        prop_train=.7, 
+        prop_train=.6, 
         prop_val=.3, 
         prop_test=.1
     )
@@ -34,8 +38,8 @@ def dataloaders(data_dir):
     )
 
     return dict(
-        pairs = coco_dataloaders.pairs(*props_pairs, batch_size=32, shuffle=True),
-        singles = coco_dataloaders.singles(*props_singles, batch_size=32, shuffle=True)
+        pairs = coco_dataloaders.pairs(**props_pairs, batch_size=32, shuffle=True),
+        singles = coco_dataloaders.singles(**props_singles, batch_size=32, shuffle=True)
     )
 
 data = None
@@ -54,15 +58,15 @@ def objective(trial: optuna.trial.Trial) -> float:
     )
 
 
-    model = BaseLine(
+    model = models.BaseLine(
         ae_output_size=(128, 128),
-        ae_bridge_out_dims=1024,
+        ae_bridge_out_dims=[1024],
         gan_noise_dim=256,
         ae_train_dl=data["pairs"]["train"],
         disc_train_dl=data["singles"]["train"], 
         val_dl=data["pairs"]["val"], 
         test_dl=data["pairs"]["test"],
-        *hyperparameters
+        **hyperparameters
     ) 
 
     trainer = pl.Trainer(
@@ -83,7 +87,7 @@ def objective(trial: optuna.trial.Trial) -> float:
 
 
 if __name__ == "__main__":
-    import os
+    
 
     parser = argparse.ArgumentParser(description="PyTorch Lightning example.")
     parser.add_argument(
@@ -94,10 +98,14 @@ if __name__ == "__main__":
         "trials at the early stages of training.",
     )
     parser.add_argument(
-        "--data",
-        "-d",
-        help="Data directory"
+        "--imgs",
+        help="Images directory"
     )
+    parser.add_argument(
+        "--anns",
+        help="Annotations directory"
+    )
+
 
     args = parser.parse_args()
 
@@ -105,7 +113,10 @@ if __name__ == "__main__":
         optuna.pruners.MedianPruner() if args.pruning else optuna.pruners.NopPruner()
     )
 
-    data = dataloaders(os.path.abspath(args.data))
+    data = dataloaders(
+        *[os.path.abspath(path) for path in (args.imgs, args.anns)]
+    )
+
     study = optuna.create_study(direction="minimize", pruner=pruner)
     study.optimize(objective, n_trials=100, timeout=600)
 

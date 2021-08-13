@@ -139,7 +139,7 @@ class CocoSinglesDataset(CocoDataset):
 
 class CocoDatasets():
 
-    def __init__(self, imgs_dir, anns_dir="/Volumes/F_LEDOYEN/ms_coco/annotations", coco=False) -> None:
+    def __init__(self, imgs_dir, anns_dir, coco=False) -> None:
         self.anns_dir_pattern = anns_dir+"/{}.json"
         self.anns_files = {
             "coco_anns_all" : "instances_all2017",
