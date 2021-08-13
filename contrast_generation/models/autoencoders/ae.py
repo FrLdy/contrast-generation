@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import pytorch_lightning as pl
 import itertools
 
-from models.autoencoders.components import (
+from contrast_generation.models.autoencoders.components import (
     ResnetEncoder,
     Bridge, 
     UnetDecoder

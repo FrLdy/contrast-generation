@@ -7,7 +7,7 @@ import numpy as np
 import json
 import skimage.io as io
 from pycocotools.coco import COCO
-import utils.functionnal as f
+import contrast_generation.utils.functionnal as f
 
 class CocoDataset(data.Dataset):
 

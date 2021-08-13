@@ -1,11 +1,12 @@
+import sys
+print(sys.path)
 from logging import log
-import horovod
 import optuna
 from optuna.integration import PyTorchLightningPruningCallback
 
-from models.base_line.model import BaseLine
-from dataloading.coco.datasets import CocoDatasets
-from dataloading.coco.dataloaders import CocoDataLoaders
+from contrast_generation.models.base_line import BaseLine
+from contrast_generation.dataloading.coco.datasets import CocoDatasets
+from contrast_generation.dataloading.coco.dataloaders import CocoDataLoaders
 
 import torch
 import pytorch_lightning as pl
