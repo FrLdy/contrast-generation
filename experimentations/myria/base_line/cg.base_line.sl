@@ -20,14 +20,8 @@
 # Loading the required modules
 module load python3-DL/3.8.5
 
-
-# Copy input data and go to working directory
-cp hvd_mnist.py $LOCAL_WORK_DIR
-
 # Starting the calculation
-cd $LOCAL_WORK_DIR/
-echo Working directory : $PWD
-srun python3 train.py > std_out.log
+srun ./train.sh > std_out.log
 
 mkdir $SLURM_SUBMIT_DIR/logs/$SLURM_JOB_ID
 mv *.log $SLURM_SUBMIT_DIR/logs/$SLURM_JOB_ID/ 
