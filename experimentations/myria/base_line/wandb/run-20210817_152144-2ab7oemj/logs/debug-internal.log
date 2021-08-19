@@ -1,0 +1,43 @@
+2021-08-17 15:21:51,011 INFO    MainThread:12888 [internal.py:wandb_internal():88] W&B internal server running at pid: 12888, started at: 2021-08-17 15:21:51.010073
+2021-08-17 15:21:51,015 DEBUG   HandlerThread:12888 [handler.py:handle_request():124] handle_request: check_version
+2021-08-17 15:21:51,016 INFO    WriterThread:12888 [datastore.py:open_for_write():80] open: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/run-2ab7oemj.wandb
+2021-08-17 15:21:51,020 DEBUG   SenderThread:12888 [sender.py:send():179] send: header
+2021-08-17 15:21:51,020 DEBUG   SenderThread:12888 [sender.py:send_request():193] send_request: check_version
+2021-08-17 15:21:51,085 DEBUG   SenderThread:12888 [sender.py:send():179] send: run
+2021-08-17 15:21:51,090 INFO    SenderThread:12888 [sender.py:_maybe_setup_resume():413] checking resume status for None/contrast_generation/2ab7oemj
+2021-08-17 15:21:51,487 INFO    SenderThread:12888 [dir_watcher.py:__init__():168] watching files in: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files
+2021-08-17 15:21:51,487 INFO    SenderThread:12888 [sender.py:_start_run_threads():716] run started: 2ab7oemj with start time 1629206505
+2021-08-17 15:21:51,487 DEBUG   SenderThread:12888 [sender.py:send():179] send: summary
+2021-08-17 15:21:51,489 INFO    SenderThread:12888 [sender.py:_save_file():841] saving file wandb-summary.json with policy end
+2021-08-17 15:21:51,490 DEBUG   HandlerThread:12888 [handler.py:handle_request():124] handle_request: run_start
+2021-08-17 15:21:58,977 INFO    Thread-8  :12888 [dir_watcher.py:_on_file_created():216] file/dir created: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files/output.log
+2021-08-17 15:21:58,978 INFO    Thread-8  :12888 [dir_watcher.py:_on_file_created():216] file/dir created: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files/wandb-summary.json
+2021-08-17 15:22:16,329 DEBUG   HandlerThread:12888 [meta.py:__init__():39] meta init
+2021-08-17 15:22:16,330 DEBUG   HandlerThread:12888 [meta.py:__init__():53] meta init done
+2021-08-17 15:22:16,330 DEBUG   HandlerThread:12888 [meta.py:probe():210] probe
+2021-08-17 15:22:16,341 DEBUG   HandlerThread:12888 [meta.py:_setup_git():200] setup git
+2021-08-17 15:22:16,453 DEBUG   HandlerThread:12888 [meta.py:_setup_git():207] setup git done
+2021-08-17 15:22:16,453 DEBUG   HandlerThread:12888 [meta.py:_save_pip():57] save pip
+2021-08-17 15:22:16,456 DEBUG   HandlerThread:12888 [meta.py:_save_pip():71] save pip done
+2021-08-17 15:22:16,457 DEBUG   HandlerThread:12888 [meta.py:_save_conda():78] save conda
+2021-08-17 15:22:17,233 INFO    Thread-8  :12888 [dir_watcher.py:_on_file_created():216] file/dir created: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files/requirements.txt
+2021-08-17 15:22:17,234 INFO    Thread-8  :12888 [dir_watcher.py:_on_file_created():216] file/dir created: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files/conda-environment.yaml
+2021-08-17 15:22:37,739 DEBUG   HandlerThread:12888 [meta.py:_save_conda():86] save conda done
+2021-08-17 15:22:37,739 DEBUG   HandlerThread:12888 [meta.py:probe():252] probe done
+2021-08-17 15:22:37,781 DEBUG   HandlerThread:12888 [handler.py:handle_request():124] handle_request: stop_status
+2021-08-17 15:22:37,783 DEBUG   SenderThread:12888 [sender.py:send_request():193] send_request: stop_status
+2021-08-17 15:22:37,946 DEBUG   SenderThread:12888 [sender.py:send():179] send: metric
+2021-08-17 15:22:37,947 DEBUG   SenderThread:12888 [sender.py:send():179] send: metric
+2021-08-17 15:22:37,947 WARNING SenderThread:12888 [sender.py:send_metric():799] Seen metric with glob (shouldnt happen)
+2021-08-17 15:22:37,950 DEBUG   SenderThread:12888 [sender.py:send():179] send: config
+2021-08-17 15:22:37,950 DEBUG   SenderThread:12888 [sender.py:send():179] send: metric
+2021-08-17 15:22:38,245 INFO    Thread-8  :12888 [dir_watcher.py:_on_file_modified():229] file/dir modified: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files/conda-environment.yaml
+2021-08-17 15:22:38,246 INFO    Thread-8  :12888 [dir_watcher.py:_on_file_created():216] file/dir created: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files/wandb-metadata.json
+2021-08-17 15:22:53,254 INFO    Thread-8  :12888 [dir_watcher.py:_on_file_modified():229] file/dir modified: /gpfs1/home/2017025/fledoy01/code/contrast_generation/experimentations/myria/base_line/wandb/run-20210817_152144-2ab7oemj/files/config.yaml
+2021-08-18 06:35:26,198 WARNING FileStreamThread:12888 [file_stream.py:request_with_retry():456] requests_with_retry encountered retryable exception: 500 Server Error: Internal Server Error for url: https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x2b9c95076760>>, args: ('https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream',), kwargs: {'json': {'complete': False, 'failed': False, 'uploaded': []}}
+2021-08-18 06:35:28,790 WARNING FileStreamThread:12888 [file_stream.py:request_with_retry():456] requests_with_retry encountered retryable exception: 500 Server Error: Internal Server Error for url: https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x2b9c95076760>>, args: ('https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream',), kwargs: {'json': {'complete': False, 'failed': False, 'uploaded': []}}
+2021-08-18 06:35:33,635 WARNING FileStreamThread:12888 [file_stream.py:request_with_retry():456] requests_with_retry encountered retryable exception: 500 Server Error: Internal Server Error for url: https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x2b9c95076760>>, args: ('https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream',), kwargs: {'json': {'complete': False, 'failed': False, 'uploaded': []}}
+2021-08-18 06:35:42,016 WARNING FileStreamThread:12888 [file_stream.py:request_with_retry():456] requests_with_retry encountered retryable exception: 500 Server Error: Internal Server Error for url: https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x2b9c95076760>>, args: ('https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream',), kwargs: {'json': {'complete': False, 'failed': False, 'uploaded': []}}
+2021-08-18 06:35:58,864 WARNING FileStreamThread:12888 [file_stream.py:request_with_retry():456] requests_with_retry encountered retryable exception: 500 Server Error: Internal Server Error for url: https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x2b9c95076760>>, args: ('https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream',), kwargs: {'json': {'complete': False, 'failed': False, 'uploaded': []}}
+2021-08-18 06:36:37,456 WARNING FileStreamThread:12888 [file_stream.py:request_with_retry():456] requests_with_retry encountered retryable exception: 500 Server Error: Internal Server Error for url: https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x2b9c95076760>>, args: ('https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream',), kwargs: {'json': {'complete': False, 'failed': False, 'uploaded': []}}
+2021-08-18 06:37:54,753 WARNING FileStreamThread:12888 [file_stream.py:request_with_retry():456] requests_with_retry encountered retryable exception: 502 Server Error: Bad Gateway for url: https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x2b9c95076760>>, args: ('https://api.wandb.ai/files/frldy/contrast_generation/2ab7oemj/file_stream',), kwargs: {'json': {'complete': False, 'failed': False, 'uploaded': []}}

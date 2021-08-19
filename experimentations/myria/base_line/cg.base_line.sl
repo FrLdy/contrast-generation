@@ -9,8 +9,8 @@
 #SBATCH --mem 10000 
 #SBATCH --mail-type ALL
 #SBATCH --mail-user francois.ledoyen@unicaen.fr
-#SBATCH --partition gpu_p100
-#SBATCH --gres gpu:2
+#SBATCH --partition gpu_v100
+#SBATCH --gres gpu:4
 #SBATCH --nodes 2
 #SBATCH --output %J.out
 #SBATCH --error %J.err
@@ -20,8 +20,14 @@
 # Loading the required modules
 module load python3-DL/3.8.5
 
-# Starting the calculation
-srun ./train.sh > std_out.log
 
-mkdir $SLURM_SUBMIT_DIR/logs/$SLURM_JOB_ID
-mv *.log $SLURM_SUBMIT_DIR/logs/$SLURM_JOB_ID/ 
+logs_dir="$SLURM_SUBMIT_DIR/logs"
+mkdir -p $logs_dir
+mkdir "$logs_dir/$SLURM_JOB_ID"
+mv $SLURM_JOB_ID.* "$logs_dir/$SLURM_JOB_ID/"
+
+
+BASE_DIR="/home/2017025/fledoy01/code/contrast_generation/data/coco"
+IMGS_DIR="$BASE_DIR/imgs"
+ANNS_DIR="$BASE_DIR/datasets"
+python train.py -p --imgs $IMGS_DIR --anns $ANNS_DIR 

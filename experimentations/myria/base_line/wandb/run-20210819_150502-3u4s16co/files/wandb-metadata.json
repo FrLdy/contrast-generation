@@ -1,0 +1,28 @@
+{
+    "os": "Linux-3.10.0-957.27.2.el7.x86_64-x86_64-with-glibc2.10",
+    "python": "3.8.5",
+    "heartbeatAt": "2021-08-19T13:05:33.749356",
+    "startedAt": "2021-08-19T13:05:02.515989",
+    "docker": null,
+    "cpu_count": 56,
+    "cuda": null,
+    "args": [
+        "-p",
+        "--imgs",
+        "/home/2017025/fledoy01/code/contrast_generation/data/coco/imgs",
+        "--anns",
+        "/home/2017025/fledoy01/code/contrast_generation/data/coco/datasets"
+    ],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "experimentations/myria/base_line/train.py",
+    "git": {
+        "remote": "https://github.com/FrLdy/contrast_generation.git",
+        "commit": "6691f04822e49b1a86c92b03e8e56fb63cf3ac85"
+    },
+    "email": null,
+    "root": "/gpfs1/home/2017025/fledoy01/code/contrast_generation",
+    "host": "frontal01",
+    "username": "fledoy01",
+    "executable": "/soft/Python3-DL/conda/2010_4.8.3/envs/pydl-2011/bin/python"
+}

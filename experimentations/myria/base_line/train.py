@@ -45,7 +45,6 @@ def dataloaders(imgs_dir, anns_dir):
 data = None
 
 wandb.login()
-wandb_logger = pl.loggers.WandbLogger()
 
 def objective(trial: optuna.trial.Trial) -> float:
     
@@ -69,18 +68,25 @@ def objective(trial: optuna.trial.Trial) -> float:
         **hyperparameters
     ) 
 
+    wandb_logger = pl.loggers.WandbLogger(project="contrast_generation")
+
     trainer = pl.Trainer(
+	gpus=4,
+	num_nodes=2,
         accelerator='horovod',
         logger=wandb_logger,
+	log_every_n_steps=50,
         checkpoint_callback=False,
-        max_epochs=EPOCHS,
-        gpus=NB_GPUS if torch.cuda.is_available() else None,
-        callbacks=[PyTorchLightningPruningCallback(trial, monitor="val_loss/acc")], # changer la loss
+        callbacks=[
+		PyTorchLightningPruningCallback(trial, monitor="val_loss/acc"),
+		pl.callbacks.early_stopping.EarlyStopping(monitor="val_loss/acc")
+	]
     )
     
     
     trainer.logger.log_hyperparams(hyperparameters)
     trainer.fit(model) 
+    trainer.test(ckpt_path=None)
 
     return trainer.callback_metrics["val_loss/acc"].item()
 

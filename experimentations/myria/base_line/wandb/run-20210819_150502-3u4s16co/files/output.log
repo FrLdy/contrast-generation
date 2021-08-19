@@ -1,0 +1,176 @@
+  | Name               | Type                    | Params | In sizes       | Out sizes
+--------------------------------------------------------------------------------------------------
+0 | ae                 | ResUnetAE               | 28.2 M | ?              | ?
+1 | bridge_union       | Sequential              | 4.7 M  | [3, 512, 4, 4] | [3, 1024, 2, 2]
+2 | conv_input_decoder | ConvBlock               | 18.9 M | ?              | ?
+3 | gan                | ConstrastDCGAN          | 41.2 M | ?              | ?
+4 | contrast_loss      | TestContentContrastLoss | 0      | ?              | ?
+--------------------------------------------------------------------------------------------------
+93.0 M    Trainable params
+0         Non-trainable params
+93.0 M    Total params
+371.967   Total estimated model params size (MB)
+/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/data_loading.py:348: UserWarning: Your val_dataloader has `shuffle=True`, it is best practice to turn this off for val/test/predict dataloaders.
+  rank_zero_warn(
+
+
+
+
+
+
+
+
+
+
+Epoch 0:   4%|██████                                                                                                                                         | 7/164 [00:40<14:59,  5.73s/it, loss=1.46, v_num=16co]
+[33m[W 2021-08-19 15:06:02,449][39m Trial 0 failed because of the following error: RuntimeError('Caught RuntimeError in DataLoader worker process 0.\nOriginal Traceback (most recent call last):\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/worker.py", line 198, in _worker_loop\n    data = fetcher.fetch(index)\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 44, in fetch\n    data = [self.dataset[idx] for idx in possibly_batched_index]\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 44, in <listcomp>\n    data = [self.dataset[idx] for idx in possibly_batched_index]\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataset.py", line 272, in __getitem__\n    return self.dataset[self.indices[idx]]\n  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 37, in __getitem__\n    img = self._img_by_local_path(path)\n  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 68, in _img_by_local_path\n    return self._get_np_img(path)\n  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 73, in _get_np_img\n    img = self.transform(img)\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 67, in __call__\n    img = t(img)\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl\n    result = self.forward(*input, **kwargs)\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 226, in forward\n    return F.normalize(tensor, self.mean, self.std, self.inplace)\n  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/functional.py", line 284, in normalize\n    tensor.sub_(mean).div_(std)\nRuntimeError: output with shape [1, 128, 128] doesn\'t match the broadcast shape [3, 128, 128]\n')
+Traceback (most recent call last):
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/optuna/study/_optimize.py", line 213, in _run_trial
+    value_or_values = func(trial)
+  File "train.py", line 86, in objective
+    trainer.fit(model)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 458, in fit
+    self._run(model)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 756, in _run
+    self.dispatch()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 797, in dispatch
+    self.accelerator.start_training(self)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/accelerators/accelerator.py", line 96, in start_training
+    self.training_type_plugin.start_training(trainer)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/plugins/training_type/horovod.py", line 107, in start_training
+    self._results = trainer.run_stage()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 807, in run_stage
+    return self.run_train()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 869, in run_train
+    self.train_loop.run_training_epoch()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/training_loop.py", line 491, in run_training_epoch
+    for batch_idx, (batch, is_last_batch) in train_dataloader:
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/profiler/profilers.py", line 112, in profile_iterable
+    value = next(iterator)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 534, in prefetch_iterator
+    for val in it:
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 464, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 478, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/utilities/apply_func.py", line 90, in apply_to_collection
+    OrderedDict({
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/utilities/apply_func.py", line 91, in <dictcomp>
+    k: apply_to_collection(v, dtype, function, *args, wrong_dtype=wrong_dtype, **kwargs)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/utilities/apply_func.py", line 85, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 220, in __next__
+    return next(self._loader_iter)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 435, in __next__
+    data = self._next_data()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1085, in _next_data
+    return self._process_data(data)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1111, in _process_data
+    data.reraise()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/_utils.py", line 428, in reraise
+    raise self.exc_type(msg)
+RuntimeError: Caught RuntimeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/worker.py", line 198, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 44, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 44, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataset.py", line 272, in __getitem__
+    return self.dataset[self.indices[idx]]
+  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 37, in __getitem__
+    img = self._img_by_local_path(path)
+  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 68, in _img_by_local_path
+    return self._get_np_img(path)
+  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 73, in _get_np_img
+    img = self.transform(img)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 67, in __call__
+    img = t(img)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 226, in forward
+    return F.normalize(tensor, self.mean, self.std, self.inplace)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/functional.py", line 284, in normalize
+    tensor.sub_(mean).div_(std)
+RuntimeError: output with shape [1, 128, 128] doesn't match the broadcast shape [3, 128, 128]
+Traceback (most recent call last):
+  File "train.py", line 125, in <module>
+    study.optimize(objective, n_trials=100, timeout=600)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/optuna/study/study.py", line 400, in optimize
+    _optimize(
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/optuna/study/_optimize.py", line 66, in _optimize
+    _optimize_sequential(
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/optuna/study/_optimize.py", line 163, in _optimize_sequential
+    trial = _run_trial(study, func, catch)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/optuna/study/_optimize.py", line 264, in _run_trial
+    raise func_err
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/optuna/study/_optimize.py", line 213, in _run_trial
+    value_or_values = func(trial)
+  File "train.py", line 86, in objective
+    trainer.fit(model)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 458, in fit
+    self._run(model)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 756, in _run
+    self.dispatch()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 797, in dispatch
+    self.accelerator.start_training(self)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/accelerators/accelerator.py", line 96, in start_training
+    self.training_type_plugin.start_training(trainer)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/plugins/training_type/horovod.py", line 107, in start_training
+    self._results = trainer.run_stage()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 807, in run_stage
+    return self.run_train()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/trainer.py", line 869, in run_train
+    self.train_loop.run_training_epoch()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/training_loop.py", line 491, in run_training_epoch
+    for batch_idx, (batch, is_last_batch) in train_dataloader:
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/profiler/profilers.py", line 112, in profile_iterable
+    value = next(iterator)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 534, in prefetch_iterator
+    for val in it:
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 464, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 478, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/utilities/apply_func.py", line 90, in apply_to_collection
+    OrderedDict({
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/utilities/apply_func.py", line 91, in <dictcomp>
+    k: apply_to_collection(v, dtype, function, *args, wrong_dtype=wrong_dtype, **kwargs)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/utilities/apply_func.py", line 85, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/pytorch_lightning/trainer/supporters.py", line 220, in __next__
+    return next(self._loader_iter)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 435, in __next__
+    data = self._next_data()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1085, in _next_data
+    return self._process_data(data)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1111, in _process_data
+    data.reraise()
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/_utils.py", line 428, in reraise
+    raise self.exc_type(msg)
+RuntimeError: Caught RuntimeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/worker.py", line 198, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 44, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 44, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/utils/data/dataset.py", line 272, in __getitem__
+    return self.dataset[self.indices[idx]]
+  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 37, in __getitem__
+    img = self._img_by_local_path(path)
+  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 68, in _img_by_local_path
+    return self._get_np_img(path)
+  File "/gpfs1/home/2017025/fledoy01/code/contrast_generation/contrast_generation/dataloading/coco/datasets.py", line 73, in _get_np_img
+    img = self.transform(img)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 67, in __call__
+    img = t(img)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 226, in forward
+    return F.normalize(tensor, self.mean, self.std, self.inplace)
+  File "/home/2017025/fledoy01/.python-DL-3.8.5/site-packages/lib/python3.8/site-packages/torchvision/transforms/functional.py", line 284, in normalize
+    tensor.sub_(mean).div_(std)
+RuntimeError: output with shape [1, 128, 128] doesn't match the broadcast shape [3, 128, 128]

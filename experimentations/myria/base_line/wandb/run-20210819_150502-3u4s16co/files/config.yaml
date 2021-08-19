@@ -1,0 +1,41 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.10.33
+    framework: lightning
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    m:
+    - 1: trainer/global_step
+      6:
+      - 3
+    python_version: 3.8.5
+    t:
+      1:
+      - 1
+      - 5
+      - 9
+      2:
+      - 1
+      - 5
+      - 9
+      3:
+      - 7
+      4: 3.8.5
+      5: 0.10.33
+      8:
+      - 5
+ae_lr:
+  desc: null
+  value: 0.0004
+gan_lr:
+  desc: null
+  value: 0.0004
+weight_decay_ae:
+  desc: null
+  value: 0.1
+weight_decay_gan:
+  desc: null
+  value: 0.1
