@@ -159,6 +159,7 @@ class CocoDatasets():
         self.pairs_transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize((128, 128)),
+            transforms.Lambda(lambda x: x.repeat(3,1,1)),
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225]
@@ -168,6 +169,7 @@ class CocoDatasets():
         self.singles_transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize((64, 64)),
+	    transforms.Lambda(lambda x: x.repeat(3,1,1)),
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225]

@@ -71,8 +71,6 @@ def objective(trial: optuna.trial.Trial) -> float:
     wandb_logger = pl.loggers.WandbLogger(project="contrast_generation")
 
     trainer = pl.Trainer(
-	gpus=4,
-	num_nodes=2,
         accelerator='horovod',
         logger=wandb_logger,
 	log_every_n_steps=50,

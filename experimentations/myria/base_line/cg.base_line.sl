@@ -9,9 +9,9 @@
 #SBATCH --mem 10000 
 #SBATCH --mail-type ALL
 #SBATCH --mail-user francois.ledoyen@unicaen.fr
-#SBATCH --partition gpu_v100
+#SBATCH --partition gpu_all
 #SBATCH --gres gpu:4
-#SBATCH --nodes 2
+#SBATCH --nodes 1
 #SBATCH --output %J.out
 #SBATCH --error %J.err
 #SBATCH --cpus-per-task=10
@@ -30,4 +30,4 @@ mv $SLURM_JOB_ID.* "$logs_dir/$SLURM_JOB_ID/"
 BASE_DIR="/home/2017025/fledoy01/code/contrast_generation/data/coco"
 IMGS_DIR="$BASE_DIR/imgs"
 ANNS_DIR="$BASE_DIR/datasets"
-python train.py -p --imgs $IMGS_DIR --anns $ANNS_DIR 
+srun horovodrun -np 4 python train.py -p --imgs $IMGS_DIR --anns $ANNS_DIR 
